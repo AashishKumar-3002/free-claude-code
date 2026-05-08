@@ -1,5 +1,6 @@
 """Tests for config/logging_config.py."""
 
+import errno
 import json
 import logging
 from pathlib import Path
@@ -94,3 +95,17 @@ def test_httpx_resets_to_notset_when_verbose_third_party(tmp_path) -> None:
     log_file = str(tmp_path / "verbose.log")
     configure_logging(log_file, force=True, verbose_third_party=True)
     assert logging.getLogger("httpx").level == logging.NOTSET
+
+
+def test_configure_logging_falls_back_when_log_file_unwritable(
+    tmp_path, monkeypatch
+) -> None:
+    log_file = str(tmp_path / "readonly.log")
+
+    def _raise_readonly(*_args, **_kwargs) -> str:
+        raise OSError(errno.EROFS, "Read-only file system")
+
+    monkeypatch.setattr(Path, "write_text", _raise_readonly)
+
+    configure_logging(log_file, force=True)
+    logging.getLogger("test.readonly").info("falls back to stderr")

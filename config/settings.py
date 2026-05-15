@@ -29,8 +29,8 @@ class ConfiguredChatModelRef:
 def _env_files() -> tuple[Path, ...]:
     """Return env file paths in priority order (later overrides earlier)."""
     files: list[Path] = [
-        Path.home() / ".config" / "free-claude-code" / ".env",
         Path(".env"),
+        Path.home() / ".config" / "free-claude-code" / ".env",
     ]
     if explicit := os.environ.get("FCC_ENV_FILE"):
         files.append(Path(explicit))
@@ -112,6 +112,22 @@ class Settings(BaseSettings):
     # ==================== DeepSeek Config ====================
     deepseek_api_key: str = Field(default="", validation_alias="DEEPSEEK_API_KEY")
 
+    # ==================== Kimi Config ====================
+    kimi_api_key: str = Field(default="", validation_alias="KIMI_API_KEY")
+
+    # ==================== Wafer Config ====================
+    wafer_api_key: str = Field(default="", validation_alias="WAFER_API_KEY")
+
+    # ==================== OpenCode Zen Config ====================
+    opencode_api_key: str = Field(default="", validation_alias="OPENCODE_API_KEY")
+
+    # ==================== Z.ai Config ====================
+    zai_api_key: str = Field(default="", validation_alias="ZAI_API_KEY")
+    zai_base_url: str = Field(
+        default="https://api.z.ai/api/coding/paas/v4",
+        validation_alias="ZAI_BASE_URL",
+    )
+
     # ==================== Messaging Platform Selection ====================
     # Valid: "telegram" | "discord" | "none"
     messaging_platform: str = Field(
@@ -161,6 +177,10 @@ class Settings(BaseSettings):
     open_router_proxy: str = Field(default="", validation_alias="OPENROUTER_PROXY")
     lmstudio_proxy: str = Field(default="", validation_alias="LMSTUDIO_PROXY")
     llamacpp_proxy: str = Field(default="", validation_alias="LLAMACPP_PROXY")
+    kimi_proxy: str = Field(default="", validation_alias="KIMI_PROXY")
+    wafer_proxy: str = Field(default="", validation_alias="WAFER_PROXY")
+    opencode_proxy: str = Field(default="", validation_alias="OPENCODE_PROXY")
+    zai_proxy: str = Field(default="", validation_alias="ZAI_PROXY")
 
     # ==================== Provider Rate Limiting ====================
     provider_rate_limit: int = Field(default=40, validation_alias="PROVIDER_RATE_LIMIT")
@@ -286,7 +306,7 @@ class Settings(BaseSettings):
     # ==================== Server ====================
     host: str = "0.0.0.0"
     port: int = 8082
-    log_file: str = "server.log"
+    log_file: str = "logs/server.log"
     # Optional server API key to protect endpoints (Anthropic-style)
     # Set via env `ANTHROPIC_AUTH_TOKEN`. When empty, no auth is required.
     anthropic_auth_token: str = Field(
